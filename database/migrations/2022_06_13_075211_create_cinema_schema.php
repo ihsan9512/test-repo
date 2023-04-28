@@ -36,7 +36,69 @@ class CreateCinemaSchema extends Migration
      */
     public function up()
     {
-        throw new \Exception('implement in coding task 4, you can ignore this exception if you are just running the initial migrations.');
+        Schema::create('films', function($table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->string('details');
+            $table->string('duration');
+            $table->timestamps();
+        });
+
+        Schema::create('show_rooms', function($table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->string('location');
+            $table->timestamps();
+        });
+
+        Schema::create('seat_types', function($table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->timestamps();
+        });
+
+        Schema::create('shows', function($table) {
+            $table->increments('id');
+            $table->foreign('film_id')->references('id')->on('films')->onDelete('cascade');
+            $table->datetime('strat_time');
+            $table->datetime('end_time');
+            $table->timestamps();
+        });
+
+        Schema::create('seat_types', function($table) {
+            $table->increments('id');
+            $table->string('name');
+            $table->timestamps();
+        });
+
+        Schema::create('prices', function($table) {
+            $table->increments('id');
+            $table->foreign('show_id')->references('id')->on('shows')->onDelete('cascade');
+            $table->foreign('show_room_id')->references('id')->on('show_rooms')->onDelete('cascade');
+            $table->foreign('seat_type_id')->references('id')->on('seat_types')->onDelete('cascade');
+            $table->string('price');
+            $table->string('discount');
+            $table->timestamps();
+        });
+
+        Schema::create('seats', function($table) {
+            $table->increments('id');
+            $table->foreign('show_room_id')->references('id')->on('show_rooms')->onDelete('cascade');
+            $table->foreign('seat_type_id')->references('id')->on('seat_types')->onDelete('cascade');
+            $table->string('seat_no');
+            $table->timestamps();
+        });
+
+        Schema::create('bookings', function($table) {
+            $table->increments('id');
+            $table->foreign('show_id')->references('id')->on('shows')->onDelete('cascade');
+            $table->foreign('show_room_id')->references('id')->on('show_rooms')->onDelete('cascade');
+            $table->foreign('seat_type_id')->references('id')->on('seat_types')->onDelete('cascade');
+            $table->string('user_name');
+            $table->string('user_mobile');
+            $table->timestamps();
+        });
+        // throw new \Exception('implement in coding task 4, you can ignore this exception if you are just running the initial migrations.');
     }
 
     /**
