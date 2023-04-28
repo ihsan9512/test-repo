@@ -101,7 +101,41 @@ class EventsController extends BaseController
      */
 
     public function getEventsWithWorkshops() {
-        throw new \Exception('implement in coding task 1');
+        $event = Event::with('workshops')->get();
+        return $event->map(function ($event) {
+            return $this->FormatEvent($event);
+        });
+        // throw new \Exception('implement in coding task 1');
+    }
+
+    public function FormatEvent($event)
+    {
+        $FormatedEvent = [
+            'id' => $event->id,
+            'name' => $event->name,
+            'created_at' => $event->created_at,
+            'updated_at' => $event->updated_at,
+            'workshops' => $event->workshops->map(function ($workshop) {
+                return $this->FormatWorkshops($workshop);
+            }),
+        ];
+
+        return $FormatedEvent;
+    }
+
+    public function FormatWorkshops($workshop)
+    {
+        $FormatedWorkshop = [
+            'id' => $workshop->id,
+            'start' => $workshop->start,
+            'end' => $workshop->end,
+            'event_id' => $workshop->event_id,
+            'name' => $workshop->name,
+            'created_at' => $workshop->created_at,
+            'updated_at' => $workshop->updated_at,
+        ];
+
+        return $FormatedWorkshop;
     }
 
 
@@ -179,6 +213,13 @@ class EventsController extends BaseController
      */
 
     public function getFutureEventsWithWorkshops() {
-        throw new \Exception('implement in coding task 2');
+        $event = Event::with('workshops')
+                ->join('workshops', 'workshops.event_id', '=', 'events.id')
+                ->where('workshops.start','>',now())
+                ->get();
+        return $event->map(function ($event) {
+            return $this->FormatEvent($event);
+        });
+        // throw new \Exception('implement in coding task 2');
     }
 }
