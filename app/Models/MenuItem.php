@@ -9,4 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 class MenuItem extends Model
 {
 
+    public function child()
+    {
+        return $this->hasMany(MenuItem::class, 'parent_id', 'id');
+    }
 }

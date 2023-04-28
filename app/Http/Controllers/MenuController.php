@@ -93,6 +93,27 @@ class MenuController extends BaseController
      */
 
     public function getMenuItems() {
-        throw new \Exception('implement in coding task 3');
+        $menu = MenuItem::with('child')->whereNull('parent_id')->get();
+        return $menu->map(function ($menu) {
+            return $this->FormatMenu($menu);
+        });
+        // throw new \Exception('implement in coding task 3');
+    }
+
+    public function FormatMenu($menu)
+    {
+        $FormatedMenu = [
+            'id' => $menu->id,
+            'name' => $menu->name,
+            'url' => $menu->url,
+            'parent_id' => $menu->parent_id,
+            'created_at' => $menu->created_at,
+            'updated_at' => $menu->updated_at,
+            'children' => $menu->child->map(function ($child) {
+                return $this->FormatMenu($child);
+            }),
+        ];
+
+        return $FormatedMenu;
     }
 }
